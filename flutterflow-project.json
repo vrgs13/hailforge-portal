@@ -1,0 +1,1079 @@
+{
+  "project": {
+    "name": "Forge AI",
+    "version": "1.0",
+    "lastUpdated": "2026-03-02",
+    "description": "PDR/Hail damage tracking app with AI estimation",
+    "platforms": ["iOS", "Android"],
+    "designSystem": {
+      "primaryColor": "#3B82F6",
+      "secondaryColor": "#10B981",
+      "backgroundColor": "#F3F4F6",
+      "surfaceColor": "#FFFFFF",
+      "textPrimary": "#1F2937",
+      "textSecondary": "#6B7280",
+      "errorColor": "#EF4444",
+      "warningColor": "#F59E0B"
+    }
+  },
+  "data": {
+    "supabase": {
+      "url": "https://pnplxodtpkasiwguugbj.supabase.co",
+      "anonKey": "sb_publishable_pRnfgV2V8E9Zrf9rqvqQ8A_ESBRSW7T",
+      "collections": [
+        {
+          "name": "Jobs",
+          "tableName": "jobs",
+          "fields": [
+            {"name": "id", "type": "number", "required": true, "autoIncrement": true},
+            {"name": "user_id", "type": "number", "required": true},
+            {"name": "vin", "type": "text"},
+            {"name": "customer_name", "type": "text", "required": true},
+            {"name": "customer_phone", "type": "text"},
+            {"name": "vehicle", "type": "text", "required": true},
+            {"name": "location", "type": "text"},
+            {"name": "notes", "type": "text"},
+            {"name": "status", "type": "text", "required": true, "defaultValue": "pending"},
+            {"name": "created_at", "type": "dateTime", "required": true, "autoCreate": true},
+            {"name": "updated_at", "type": "dateTime", "autoUpdate": true},
+            {"name": "photo_urls", "type": "text"},
+            {"name": "ai_analysis", "type": "text"}
+          ]
+        },
+        {
+          "name": "Profiles",
+          "tableName": "profiles",
+          "fields": [
+            {"name": "id", "type": "number", "required": true, "autoIncrement": true},
+            {"name": "full_name", "type": "text"},
+            {"name": "role", "type": "text"},
+            {"name": "email", "type": "text"},
+            {"name": "shop_name", "type": "text"},
+            {"name": "phone", "type": "text"},
+            {"name": "created_at", "type": "dateTime", "required": true, "autoCreate": true}
+          ]
+        }
+      ]
+    }
+  },
+  "screens": [
+    {
+      "name": "Splash",
+      "type": "splash",
+      "navigation": "auto",
+      "navigationDelay": 2000,
+      "actions": [
+        {
+          "type": "navigate",
+          "destination": "Login"
+        }
+      ],
+      "layout": {
+        "background": "primaryColor",
+        "centerContent": true,
+        "content": {
+          "type": "column",
+          "children": [
+            {
+              "type": "image",
+              "src": "assets/logo.png",
+              "width": 120,
+              "height": 120,
+              "placeholder": "Logo Placeholder"
+            },
+            {
+              "type": "text",
+              "text": "Hail Forge AI",
+              "fontSize": 32,
+              "fontWeight": "bold",
+              "color": "surfaceColor"
+            },
+            {
+              "type": "text",
+              "text": "Revolutionize Your Estimating",
+              "fontSize": 14,
+              "color": "textSecondary"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Login",
+      "type": "form",
+      "authentication": "required",
+      "actions": [
+        {
+          "type": "supabase",
+          "action": "signInWithPassword",
+          "fields": {
+            "email": "{{EmailInput.text}}",
+            "password": "{{PasswordInput.text}}"
+          },
+          "successAction": {
+            "type": "navigate",
+            "destination": "Home"
+          },
+          "errorAction": {
+            "type": "showError",
+            "message": "Invalid email or password"
+          }
+        }
+      ],
+      "layout": {
+        "centerContent": true,
+        "content": {
+          "type": "column",
+          "children": [
+            {
+              "type": "image",
+              "src": "assets/logo.png",
+              "width": 80,
+              "height": 80,
+              "placeholder": "Logo"
+            },
+            {
+              "type": "text",
+              "text": "Welcome Back",
+              "fontSize": 24,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "input",
+              "id": "EmailInput",
+              "label": "Email",
+              "type": "email",
+              "required": true
+            },
+            {
+              "type": "input",
+              "id": "PasswordInput",
+              "label": "Password",
+              "type": "password",
+              "required": true
+            },
+            {
+              "type": "button",
+              "text": "Login",
+              "primary": true,
+              "action": "supabase_signInWithPassword"
+            },
+            {
+              "type": "button",
+              "text": "Don't have an account? Sign Up",
+              "secondary": true,
+              "action": {
+                "type": "navigate",
+                "destination": "Signup"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Signup",
+      "type": "form",
+      "actions": [
+        {
+          "type": "supabase",
+          "action": "signUp",
+          "fields": {
+            "email": "{{EmailInput.text}}",
+            "password": "{{PasswordInput.text}}",
+            "data": {
+              "full_name": "{{FullNameInput.text}}",
+              "role": "{{RoleDropdown.value}}"
+            }
+          },
+          "successAction": {
+            "type": "navigate",
+            "destination": "Home"
+          },
+          "errorAction": {
+            "type": "showError",
+            "message": "Failed to create account"
+          }
+        }
+      ],
+      "layout": {
+        "centerContent": true,
+        "content": {
+          "type": "column",
+          "children": [
+            {
+              "type": "text",
+              "text": "Create Account",
+              "fontSize": 24,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "input",
+              "id": "FullNameInput",
+              "label": "Full Name",
+              "required": true
+            },
+            {
+              "type": "input",
+              "id": "EmailInput",
+              "label": "Email",
+              "type": "email",
+              "required": true
+            },
+            {
+              "type": "input",
+              "id": "PasswordInput",
+              "label": "Password (min 8 chars)",
+              "type": "password",
+              "required": true,
+              "minLength": 8
+            },
+            {
+              "type": "dropdown",
+              "id": "RoleDropdown",
+              "label": "Role",
+              "required": true,
+              "options": [
+                {"value": "technician", "label": "Technician"},
+                {"value": "shop_owner", "label": "Shop Owner"},
+                {"value": "adjuster", "label": "Insurance Adjuster"}
+              ]
+            },
+            {
+              "type": "button",
+              "text": "Create Account",
+              "primary": true,
+              "action": "supabase_signUp"
+            },
+            {
+              "type": "button",
+              "text": "Already have an account? Login",
+              "secondary": true,
+              "action": {
+                "type": "navigate",
+                "destination": "Login"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Home",
+      "type": "dashboard",
+      "actions": [
+        {
+          "type": "supabase",
+          "action": "listRecords",
+          "collection": "Jobs",
+          "filter": "user_id == {{currentUser.id}}",
+          "sort": "created_at DESC",
+          "successAction": {
+            "type": "updateVariable",
+            "variable": "recentJobs",
+            "value": "{{result}}"
+          }
+        },
+        {
+          "type": "supabase",
+          "action": "listRecords",
+          "collection": "Profiles",
+          "filter": "id == {{currentUser.id}}",
+          "successAction": {
+            "type": "updateVariable",
+            "variable": "userProfile",
+            "value": "{{result[0]}}"
+          }
+        }
+      ],
+      "layout": {
+        "content": {
+          "type": "column",
+          "children": [
+            {
+              "type": "header",
+              "title": "Hail Forge AI",
+              "subtitle": "Welcome, {{userProfile.full_name}}"
+            },
+            {
+              "type": "button",
+              "text": "Start New Job",
+              "primary": true,
+              "action": {
+                "type": "navigate",
+                "destination": "NewJob"
+              }
+            },
+            {
+              "type": "button",
+              "text": "View Jobs",
+              "secondary": true,
+              "action": {
+                "type": "navigate",
+                "destination": "JobsList"
+              }
+            },
+            {
+              "type": "button",
+              "text": "My Profile",
+              "secondary": true,
+              "action": {
+                "type": "navigate",
+                "destination": "Profile"
+              }
+            },
+            {
+              "type": "section",
+              "title": "Recent Jobs",
+              "content": {
+                "type": "list",
+                "items": "{{recentJobs.slice(0, 3)}}",
+                "itemTemplate": {
+                  "type": "card",
+                  "content": {
+                    "type": "column",
+                    "children": [
+                      {
+                        "type": "text",
+                        "text": "{{item.vehicle}}",
+                        "fontSize": 16,
+                        "fontWeight": "bold"
+                      },
+                      {
+                        "type": "text",
+                        "text": "{{item.customer_name}}",
+                        "fontSize": 14,
+                        "color": "textSecondary"
+                      },
+                      {
+                        "type": "badge",
+                        "text": "{{item.status}}",
+                        "color": "{{item.status == 'completed' ? 'success' : 'warning'}}"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "NewJob",
+      "type": "form",
+      "actions": [
+        {
+          "type": "navigate",
+          "destination": "PhotoUpload",
+          "condition": "{{photos.length > 0}}"
+        },
+        {
+          "type": "navigate",
+          "destination": "JobsList",
+          "condition": "{{photos.length == 0}}"
+        }
+      ],
+      "layout": {
+        "content": {
+          "type": "column",
+          "children": [
+            {
+              "type": "header",
+              "title": "New Job",
+              "subtitle": "Enter job details"
+            },
+            {
+              "type": "input",
+              "id": "VINInput",
+              "label": "VIN (17 characters)",
+              "type": "text",
+              "maxLength": 17,
+              "required": true,
+              "helperText": "Scan VIN or enter manually",
+              "action": {
+                "type": "http_request",
+                "method": "GET",
+                "url": "https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVin/{{VINInput.text}}?format=json",
+                "successAction": {
+                  "type": "parse_json",
+                  "path": "Results",
+                  "variable": "vinResults"
+                },
+                "errorAction": {
+                  "type": "showError",
+                  "message": "Invalid VIN"
+                }
+              }
+            },
+            {
+              "type": "button",
+              "text": "Decode VIN",
+              "secondary": true,
+              "action": "http_request_decodeVIN"
+            },
+            {
+              "type": "text",
+              "text": "VIN Decode Results",
+              "fontSize": 12,
+              "color": "textSecondary",
+              "condition": "{{vinResults}}"
+            },
+            {
+              "type": "input",
+              "id": "VehicleInput",
+              "label": "Vehicle",
+              "required": true,
+              "placeholder": "Year Make Model",
+              "condition": "{{vinResults}}"
+            },
+            {
+              "type": "input",
+              "id": "CustomerNameInput",
+              "label": "Customer Name",
+              "required": true
+            },
+            {
+              "type": "input",
+              "id": "CustomerPhoneInput",
+              "label": "Customer Phone"
+            },
+            {
+              "type": "input",
+              "id": "LocationInput",
+              "label": "Location"
+            },
+            {
+              "type": "textarea",
+              "id": "NotesInput",
+              "label": "Notes"
+            },
+            {
+              "type": "button",
+              "text": "Save Job",
+              "primary": true,
+              "action": {
+                "type": "supabase",
+                "action": "createRecord",
+                "collection": "Jobs",
+                "fields": {
+                  "user_id": "{{currentUser.id}}",
+                  "vin": "{{VINInput.text}}",
+                  "customer_name": "{{CustomerNameInput.text}}",
+                  "customer_phone": "{{CustomerPhoneInput.text}}",
+                  "vehicle": "{{VehicleInput.text}}",
+                  "location": "{{LocationInput.text}}",
+                  "notes": "{{NotesInput.text}}",
+                  "status": "pending",
+                  "photo_urls": "{{photo_urls}}",
+                  "ai_analysis": "{{ai_analysis}}"
+                },
+                "successAction": {
+                  "type": "showSuccess",
+                  "message": "Job created successfully"
+                },
+                "errorAction": {
+                  "type": "showError",
+                  "message": "Failed to create job"
+                }
+              }
+            },
+            {
+              "type": "button",
+              "text": "Cancel",
+              "secondary": true,
+              "action": {
+                "type": "navigate",
+                "destination": "Home"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "PhotoUpload",
+      "type": "upload",
+      "actions": [
+        {
+          "type": "navigate",
+          "destination": "NewJob",
+          "condition": "{{photos.length == 0}}"
+        },
+        {
+          "type": "navigate",
+          "destination": "JobsList",
+          "condition": "{{photos.length > 0}}"
+        }
+      ],
+      "layout": {
+        "content": {
+          "type": "column",
+          "children": [
+            {
+              "type": "header",
+              "title": "Photo Analysis",
+              "subtitle": "Upload photos of hail damage"
+            },
+            {
+              "type": "button",
+              "text": "Upload Photos",
+              "primary": true,
+              "accept": "image/*",
+              "multiple": true,
+              "action": {
+                "type": "updateVariable",
+                "variable": "photos",
+                "value": "{{result}}"
+              }
+            },
+            {
+              "type": "text",
+              "text": "Selected: {{photos.length}} photos",
+              "fontSize": 12,
+              "color": "textSecondary"
+            },
+            {
+              "type": "gallery",
+              "images": "{{photos}}",
+              "maxImages": 10
+            },
+            {
+              "type": "button",
+              "text": "Analyze with AI",
+              "primary": true,
+              "action": {
+                "type": "http_request",
+                "method": "POST",
+                "url": "https://hailforge-ai-mock-api.example.com/analyze",
+                "body": {
+                  "photos": "{{photos}}"
+                },
+                "successAction": {
+                  "type": "parse_json",
+                  "variable": "aiResults"
+                },
+                "loadingAction": {
+                  "type": "showLoading",
+                  "message": "Analyzing photos..."
+                }
+              }
+            },
+            {
+              "type": "text",
+              "text": "AI Analysis Results",
+              "fontSize": 16,
+              "fontWeight": "bold",
+              "condition": "{{aiResults}}"
+            },
+            {
+              "type": "card",
+              "content": {
+                "type": "column",
+                "children": [
+                  {
+                    "type": "text",
+                    "text": "Dent Count: {{aiResults.dent_count}}",
+                    "fontSize": 14
+                  },
+                  {
+                    "type": "text",
+                    "text": "Average Size: {{aiResults.average_size_cm}} cm",
+                    "fontSize": 14
+                  },
+                  {
+                    "type": "text",
+                    "text": "High-Payout Areas: {{aiResults.high_payout_areas.join(', ')}}",
+                    "fontSize": 14
+                  },
+                  {
+                    "type": "text",
+                    "text": "Estimate: {{aiResults.estimate_percentage}}% of vehicle value",
+                    "fontSize": 14
+                  },
+                  {
+                    "type": "text",
+                    "text": "Repair Estimate: ${{aiResults.repair_estimate}}",
+                    "fontSize": 16,
+                    "fontWeight": "bold",
+                    "color": "primaryColor"
+                  }
+                ]
+              },
+              "condition": "{{aiResults}}"
+            },
+            {
+              "type": "button",
+              "text": "Use in Current Job",
+              "primary": true,
+              "action": {
+                "type": "navigate",
+                "destination": "NewJob"
+              }
+            },
+            {
+              "type": "button",
+              "text": "Cancel",
+              "secondary": true,
+              "action": {
+                "type": "navigate",
+                "destination": "NewJob"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "JobsList",
+      "type": "list",
+      "actions": [
+        {
+          "type": "supabase",
+          "action": "listRecords",
+          "collection": "Jobs",
+          "filter": "user_id == {{currentUser.id}}",
+          "sort": "created_at DESC",
+          "successAction": {
+            "type": "updateVariable",
+            "variable": "jobs",
+            "value": "{{result}}"
+          }
+        }
+      ],
+      "layout": {
+        "content": {
+          "type": "column",
+          "children": [
+            {
+              "type": "header",
+              "title": "My Jobs",
+              "subtitle": "{{jobs.length}} jobs found"
+            },
+            {
+              "type": "filter",
+              "options": [
+                {"value": "all", "label": "All"},
+                {"value": "pending", "label": "Pending"},
+                {"value": "in_progress", "label": "In Progress"},
+                {"value": "completed", "label": "Completed"}
+              ],
+              "action": {
+                "type": "updateVariable",
+                "variable": "filter",
+                "value": "{{selectedOption}}"
+              }
+            },
+            {
+              "type": "list",
+              "items": "{{jobs.filter(item => filter == 'all' || item.status == filter)}}",
+              "itemTemplate": {
+                "type": "card",
+                "content": {
+                  "type": "column",
+                  "children": [
+                    {
+                      "type": "header",
+                      "title": "{{item.vehicle}}",
+                      "subtitle": "{{item.vin}}"
+                    },
+                    {
+                      "type": "text",
+                      "text": "{{item.customer_name}}",
+                      "fontSize": 14
+                    },
+                    {
+                      "type": "text",
+                      "text": "{{item.location || 'No location'}}",
+                      "fontSize": 12,
+                      "color": "textSecondary"
+                    },
+                    {
+                      "type": "text",
+                      "text": "{{formatDate(item.created_at)}}",
+                      "fontSize": 12,
+                      "color": "textSecondary"
+                    },
+                    {
+                      "type": "badge",
+                      "text": "{{item.status}}",
+                      "color": "{{item.status == 'completed' ? 'success' : 'warning'}}"
+                    },
+                    {
+                      "type": "button",
+                      "text": "View Details",
+                      "secondary": true,
+                      "action": {
+                        "type": "navigate",
+                        "destination": "JobDetails",
+                        "params": {
+                          "jobId": "{{item.id}}"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "JobDetails",
+      "type": "detail",
+      "actions": [
+        {
+          "type": "supabase",
+          "action": "listRecords",
+          "collection": "Jobs",
+          "filter": "id == {{jobId}}",
+          "successAction": {
+            "type": "updateVariable",
+            "variable": "currentJob",
+            "value": "{{result[0]}}"
+          }
+        }
+      ],
+      "layout": {
+        "content": {
+          "type": "column",
+          "children": [
+            {
+              "type": "header",
+              "title": "Job Details",
+              "subtitle": "{{currentJob.vehicle}}"
+            },
+            {
+              "type": "card",
+              "content": {
+                "type": "column",
+                "children": [
+                  {
+                    "type": "text",
+                    "text": "VIN: {{currentJob.vin || 'N/A'}}",
+                    "fontSize": 12
+                  },
+                  {
+                    "type": "text",
+                    "text": "Customer: {{currentJob.customer_name}}",
+                    "fontSize": 14,
+                    "fontWeight": "bold"
+                  },
+                  {
+                    "type": "text",
+                    "text": "Phone: {{currentJob.customer_phone || 'N/A'}}",
+                    "fontSize": 12
+                  },
+                  {
+                    "type": "text",
+                    "text": "Location: {{currentJob.location || 'N/A'}}",
+                    "fontSize": 12
+                  },
+                  {
+                    "type": "text",
+                    "text": "Notes: {{currentJob.notes || 'No notes'}}",
+                    "fontSize": 12,
+                    "color": "textSecondary"
+                  },
+                  {
+                    "type": "badge",
+                    "text": "{{currentJob.status}}",
+                    "color": "{{currentJob.status == 'completed' ? 'success' : 'warning'}}"
+                  },
+                  {
+                    "type": "text",
+                    "text": "Created: {{formatDate(currentJob.created_at)}}",
+                    "fontSize": 12,
+                    "color": "textSecondary"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "section",
+              "title": "Photos",
+              "content": {
+                "type": "gallery",
+                "images": "{{currentJob.photo_urls ? JSON.parse(currentJob.photo_urls) : []}}",
+                "maxImages": 10
+              }
+            },
+            {
+              "type": "section",
+              "title": "AI Analysis",
+              "content": {
+                "type": "card",
+                "content": {
+                  "type": "column",
+                  "children": [
+                    {
+                      "type": "text",
+                      "text": "Dent Count: {{aiResults.dent_count}}",
+                      "fontSize": 14
+                    },
+                    {
+                      "type": "text",
+                      "text": "Average Size: {{aiResults.average_size_cm}} cm",
+                      "fontSize": 14
+                    },
+                    {
+                      "type": "text",
+                      "text": "High-Payout Areas: {{aiResults.high_payout_areas.join(', ')}}",
+                      "fontSize": 14
+                    },
+                    {
+                      "type": "text",
+                      "text": "Estimate: {{aiResults.estimate_percentage}}% of vehicle value",
+                      "fontSize": 14
+                    },
+                    {
+                      "type": "text",
+                      "text": "Repair Estimate: ${{aiResults.repair_estimate}}",
+                      "fontSize": 16,
+                      "fontWeight": "bold",
+                      "color": "primaryColor"
+                    }
+                  ]
+                },
+                "condition": "{{currentJob.ai_analysis}}"
+              }
+            },
+            {
+              "type": "dropdown",
+              "id": "StatusDropdown",
+              "label": "Update Status",
+              "options": [
+                {"value": "pending", "label": "Pending"},
+                {"value": "in_progress", "label": "In Progress"},
+                {"value": "completed", "label": "Completed"}
+              ],
+              "value": "{{currentJob.status}}"
+            },
+            {
+              "type": "button",
+              "text": "Update Status",
+              "primary": true,
+              "action": {
+                "type": "supabase",
+                "action": "updateRecord",
+                "collection": "Jobs",
+                "filter": "id == {{currentJob.id}}",
+                "fields": {
+                  "status": "{{StatusDropdown.value}}"
+                },
+                "successAction": {
+                  "type": "showSuccess",
+                  "message": "Status updated"
+                }
+              }
+            },
+            {
+              "type": "button",
+              "text": "Delete Job",
+              "error": true,
+              "action": {
+                "type": "supabase",
+                "action": "deleteRecord",
+                "collection": "Jobs",
+                "filter": "id == {{currentJob.id}}",
+                "successAction": {
+                  "type": "navigate",
+                  "destination": "JobsList"
+                }
+              }
+            },
+            {
+              "type": "button",
+              "text": "Back",
+              "secondary": true,
+              "action": {
+                "type": "navigate",
+                "destination": "JobsList"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Profile",
+      "type": "form",
+      "actions": [
+        {
+          "type": "supabase",
+          "action": "listRecords",
+          "collection": "Profiles",
+          "filter": "id == {{currentUser.id}}",
+          "successAction": {
+            "type": "updateVariable",
+            "variable": "userProfile",
+            "value": "{{result[0]}}"
+          }
+        },
+        {
+          "type": "supabase",
+          "action": "updateRecord",
+          "collection": "Profiles",
+          "filter": "id == {{currentUser.id}}",
+          "fields": {
+            "full_name": "{{FullNameInput.text}}",
+            "shop_name": "{{ShopNameInput.text}}",
+            "phone": "{{PhoneInput.text}}"
+          },
+          "successAction": {
+            "type": "showSuccess",
+            "message": "Profile updated"
+          }
+        }
+      ],
+      "layout": {
+        "content": {
+          "type": "column",
+          "children": [
+            {
+              "type": "header",
+              "title": "My Profile"
+            },
+            {
+              "type": "input",
+              "id": "FullNameInput",
+              "label": "Full Name",
+              "value": "{{userProfile.full_name}}"
+            },
+            {
+              "type": "input",
+              "id": "EmailInput",
+              "label": "Email",
+              "value": "{{userProfile.email}}",
+              "disabled": true
+            },
+            {
+              "type": "input",
+              "id": "RoleInput",
+              "label": "Role",
+              "value": "{{userProfile.role}}",
+              "disabled": true
+            },
+            {
+              "type": "input",
+              "id": "ShopNameInput",
+              "label": "Shop Name"
+            },
+            {
+              "type": "input",
+              "id": "PhoneInput",
+              "label": "Phone"
+            },
+            {
+              "type": "button",
+              "text": "Update Profile",
+              "primary": true,
+              "action": "supabase_updateRecord"
+            },
+            {
+              "type": "button",
+              "text": "Logout",
+              "error": true,
+              "action": {
+                "type": "supabase",
+                "action": "signOut",
+                "successAction": {
+                  "type": "navigate",
+                  "destination": "Login"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "navigation": {
+    "routes": [
+      {"source": "Splash", "destination": "Login"},
+      {"source": "Login", "destination": "Home", "condition": "{{authenticated}}"},
+      {"source": "Signup", "destination": "Home", "condition": "{{authenticated}}"},
+      {"source": "Home", "destination": "NewJob", "action": "startNewJob"},
+      {"source": "Home", "destination": "JobsList", "action": "viewJobs"},
+      {"source": "Home", "destination": "Profile", "action": "viewProfile"},
+      {"source": "NewJob", "destination": "PhotoUpload", "condition": "{{photos.length > 0}}"},
+      {"source": "NewJob", "destination": "JobsList", "condition": "{{photos.length == 0}}"},
+      {"source": "PhotoUpload", "destination": "NewJob", "action": "cancel"},
+      {"source": "PhotoUpload", "destination": "JobsList", "action": "useInJob"},
+      {"source": "JobsList", "destination": "JobDetails", "action": "viewJob"},
+      {"source": "JobDetails", "destination": "JobsList", "action": "back"},
+      {"source": "Profile", "destination": "Login", "action": "logout"}
+    ]
+  },
+  "apis": [
+    {
+      "name": "NHTSA VIN Decode",
+      "type": "http_request",
+      "method": "GET",
+      "url": "https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVin/{{vin}}?format=json",
+      "responseFormat": "json",
+      "successAction": "parseVINResults",
+      "errorAction": "showError"
+    },
+    {
+      "name": "Mock AI Analysis",
+      "type": "http_request",
+      "method": "POST",
+      "url": "https://hailforge-ai-mock-api.example.com/analyze",
+      "body": {
+        "photos": "{{photos}}"
+      },
+      "responseFormat": "json",
+      "successAction": "parseAIResults",
+      "errorAction": "showError"
+    }
+  ],
+  "mockData": {
+    "aiAnalysis": {
+      "dent_count": 24,
+      "average_size_cm": 1.8,
+      "high_payout_areas": ["hood", "roof", "trunk"],
+      "estimate_percentage": 68,
+      "repair_estimate": 4500,
+      "estimated_payout": 67500,
+      "detailed_areas": [
+        {"area": "hood", "count": 8, "avg_size": 2.1},
+        {"area": "roof", "count": 12, "avg_size": 1.5},
+        {"area": "trunk", "count": 4, "avg_size": 2.0},
+        {"area": "doors", "count": 0, "avg_size": 0}
+      ]
+    }
+  },
+  "assets": {
+    "logo": "assets/logo.png",
+    "splash_background": "assets/splash_background.png",
+    "icons": {
+      "home": "assets/home_icon.png",
+      "jobs": "assets/jobs_icon.png",
+      "profile": "assets/profile_icon.png",
+      "add": "assets/add_icon.png",
+      "camera": "assets/camera_icon.png",
+      "upload": "assets/upload_icon.png"
+    }
+  },
+  "settings": {
+    "app_name": "Hail Forge AI",
+    "app_version": "1.0.0",
+    "analytics_enabled": false,
+    "crash_reporting_enabled": false,
+    "error_reporting_enabled": true,
+    "offline_mode": false,
+    "push_notifications": {
+      "enabled": false,
+      "channels": ["job_updates", "system"]
+    },
+    "email_notifications": {
+      "enabled": false,
+      "templates": ["job_created", "job_completed", "estimate_ready"]
+    },
+    "language": "en",
+    "currency": "USD",
+    "timezone": "America/Chicago"
+  }
+}
