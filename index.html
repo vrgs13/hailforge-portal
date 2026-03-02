@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hail Forge AI - Portal</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Landing Page -->
+        <div id="landing" class="page">
+            <header>
+                <img src="logo.png" alt="Hail Forge AI" class="logo" onerror="this.style.display='none'">
+                <h1>Hail Forge AI</h1>
+                <p class="tagline">Revolutionize Your Estimating</p>
+            </header>
+            
+            <nav class="nav-buttons">
+                <button onclick="showPage('login')" class="btn btn-primary">Login</button>
+                <button onclick="showPage('signup')" class="btn btn-secondary">Sign Up</button>
+            </nav>
+
+            <section class="features">
+                <div class="feature">
+                    <h3>Track Effortlessly</h3>
+                    <p>VIN scanning and real-time job tracking for maximum efficiency.</p>
+                </div>
+                <div class="feature">
+                    <h3>Analyze Intelligently</h3>
+                    <p>AI-powered photo analysis for accurate dent counting and sizing.</p>
+                </div>
+                <div class="feature">
+                    <h3>Maximize Profits</h3>
+                    <p>Professional estimates that boost revenue to ~70% of vehicle values.</p>
+                </div>
+            </section>
+
+            <section class="cta">
+                <h2>Ready to Transform Your Shop?</h2>
+                <p>Beta launching March 2026</p>
+                <button onclick="showPage('signup')" class="btn btn-primary btn-large">Get Early Access</button>
+            </section>
+        </div>
+
+        <!-- Login Page -->
+        <div id="login" class="page hidden">
+            <div class="auth-card">
+                <button onclick="showPage('landing')" class="back-btn">← Back</button>
+                <h2>Welcome Back</h2>
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <input type="email" id="login-email" placeholder="Email" required>
+                    <input type="password" id="login-password" placeholder="Password" required>
+                    <button type="submit" class="btn btn-primary btn-full">Login</button>
+                </form>
+                <p class="auth-switch">Don't have an account? <a href="#" onclick="showPage('signup')">Sign up</a></p>
+                <div id="login-error" class="error hidden"></div>
+            </div>
+        </div>
+
+        <!-- Signup Page -->
+        <div id="signup" class="page hidden">
+            <div class="auth-card">
+                <button onclick="showPage('landing')" class="back-btn">← Back</button>
+                <h2>Create Account</h2>
+                <form id="signup-form" onsubmit="handleSignup(event)">
+                    <input type="text" id="signup-name" placeholder="Full Name" required>
+                    <input type="email" id="signup-email" placeholder="Email" required>
+                    <input type="password" id="signup-password" placeholder="Password (min 8 chars)" required minlength="8">
+                    <select id="signup-role" required>
+                        <option value="">Select Role</option>
+                        <option value="technician">Technician</option>
+                        <option value="shop_owner">Shop Owner</option>
+                        <option value="adjuster">Insurance Adjuster</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+                </form>
+                <p class="auth-switch">Already have an account? <a href="#" onclick="showPage('login')">Login</a></p>
+                <div id="signup-error" class="error hidden"></div>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="page hidden">
+            <header class="dashboard-header">
+                <h1>Hail Forge AI</h1>
+                <div class="user-menu">
+                    <span id="user-name">User</span>
+                    <button onclick="handleLogout()" class="btn btn-secondary btn-small">Logout</button>
+                </div>
+            </header>
+
+            <main class="dashboard-main">
+                <aside class="sidebar">
+                    <nav>
+                        <button onclick="showDashboardSection('jobs')" class="nav-item active" data-section="jobs">Jobs</button>
+                        <button onclick="showDashboardSection('new-job')" class="nav-item" data-section="new-job">New Job</button>
+                        <button onclick="showDashboardSection('profile')" class="nav-item" data-section="profile">Profile</button>
+                    </nav>
+                </aside>
+
+                <section class="content">
+                    <!-- Jobs List -->
+                    <div id="jobs-section" class="dashboard-section">
+                        <h2>Your Jobs</h2>
+                        <div id="jobs-list" class="jobs-list">
+                            <p class="loading">Loading jobs...</p>
+                        </div>
+                    </div>
+
+                    <!-- New Job Form -->
+                    <div id="new-job-section" class="dashboard-section hidden">
+                        <h2>New Job</h2>
+                        <form id="new-job-form" onsubmit="handleNewJob(event)">
+                            <input type="text" id="job-vin" placeholder="VIN (17 characters)" maxlength="17" required>
+                            <button type="button" onclick="decodeVIN()" class="btn btn-secondary">Decode VIN</button>
+                            <div id="vin-result" class="vin-result hidden"></div>
+                            
+                            <input type="text" id="job-customer" placeholder="Customer Name" required>
+                            <input type="tel" id="job-phone" placeholder="Customer Phone">
+                            <input type="text" id="job-vehicle" placeholder="Vehicle (Year Make Model)" required>
+                            <input type="text" id="job-location" placeholder="Location">
+                            <textarea id="job-notes" placeholder="Notes"></textarea>
+                            
+                            <button type="submit" class="btn btn-primary btn-full">Create Job</button>
+                        </form>
+                        <div id="new-job-error" class="error hidden"></div>
+                    </div>
+
+                    <!-- Profile Section -->
+                    <div id="profile-section" class="dashboard-section hidden">
+                        <h2>Your Profile</h2>
+                        <form id="profile-form" onsubmit="handleUpdateProfile(event)">
+                            <input type="text" id="profile-name" placeholder="Full Name" required>
+                            <input type="text" id="profile-shop" placeholder="Shop Name">
+                            <input type="tel" id="profile-phone" placeholder="Phone">
+                            <button type="submit" class="btn btn-primary btn-full">Update Profile</button>
+                        </form>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
