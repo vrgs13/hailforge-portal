@@ -11,12 +11,12 @@ let userProfile = null;
 
 // ==================== Page Navigation ====================
 
-function showPage(pageId) {
+window.showPage = function(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
     document.getElementById(pageId).classList.remove('hidden');
 }
 
-function showDashboardSection(sectionId) {
+window.showDashboardSection = function(sectionId) {
     document.querySelectorAll('.dashboard-section').forEach(s => s.classList.add('hidden'));
     document.getElementById(`${sectionId}-section`).classList.remove('hidden');
     
@@ -29,7 +29,7 @@ function showDashboardSection(sectionId) {
 
 // ==================== Authentication ====================
 
-async function handleLogin(event) {
+window.handleLogin = async function(event) {
     event.preventDefault();
     const errorDiv = document.getElementById('login-error');
     errorDiv.classList.add('hidden');
@@ -53,7 +53,7 @@ async function handleLogin(event) {
     showDashboard();
 }
 
-async function handleSignup(event) {
+window.handleSignup = async function(event) {
     event.preventDefault();
     const errorDiv = document.getElementById('signup-error');
     errorDiv.classList.add('hidden');
@@ -94,7 +94,7 @@ async function handleSignup(event) {
     showPage('login');
 }
 
-async function handleLogout() {
+window.handleLogout = async function() {
     await supabase.auth.signOut();
     currentUser = null;
     userProfile = null;
@@ -182,7 +182,7 @@ async function loadJobs() {
     `).join('');
 }
 
-async function handleNewJob(event) {
+window.handleNewJob = async function(event) {
     event.preventDefault();
     const errorDiv = document.getElementById('new-job-error');
     errorDiv.classList.add('hidden');
@@ -225,7 +225,7 @@ async function handleNewJob(event) {
 
 // ==================== VIN Decoding ====================
 
-async function decodeVIN() {
+window.decodeVIN = async function() {
     const vin = document.getElementById('job-vin').value.toUpperCase();
     const resultDiv = document.getElementById('vin-result');
     
@@ -281,7 +281,7 @@ async function loadProfile() {
     document.getElementById('profile-phone').value = userProfile.phone || '';
 }
 
-async function handleUpdateProfile(event) {
+window.handleUpdateProfile = async function(event) {
     event.preventDefault();
     
     const name = document.getElementById('profile-name').value;
